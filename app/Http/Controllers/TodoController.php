@@ -4,16 +4,20 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Todo;
+use App\User;
 use Auth;
 
 class TodoController extends Controller
 {
     private $todo;
+    private $user;
+    private $userId;
 
-    public function __construct(Todo $instanceClass)
+    public function __construct(Todo $instanceClass, User $user)
     {
-        $this->todo = $instanceClass;
         $this->middleware('auth');
+        $this->todo = $instanceClass;
+        $this->user = $user;
     }
 
     /**
@@ -24,7 +28,8 @@ class TodoController extends Controller
     public function index()
     {
         $todos = $this->todo->getAll(Auth::id());
-        return view('todo.index', compact('todos'));
+        $user = $this->user->find(Auth::id());
+        return view('todo.index', compact('todos', 'user'));
     }
 
     /**
